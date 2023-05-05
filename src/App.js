@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -6,7 +7,11 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Table from "react-bootstrap/Table";
+import MyTable from "./MyTable";
+import Alert from "react-bootstrap/Alert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faUserPen } from "@fortawesome/free-solid-svg-icons";
+
 function App() {
   const [show, setShow] = useState(false);
 
@@ -19,18 +24,79 @@ function App() {
     event.preventDefault();
     setTableData((prevState) => [...prevState, formData]);
     setFormData({});
-    console.log(setFormData);
+    /*  isShowNoDataMessage(); */
+    setShow(false);
+    /* console.log(tableData); */
   };
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  const handlePen = () => {
+    console.log("penn");
+   /*  setShow(true); */
+  };
+
+  /*  const isShowNoDataMessage = (tableData) => {
+    if (tableData.length == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  console.log(tableData.length, isShowNoDataMessage); */
   return (
-    <div className="App">
-      <Button variant="primary" onClick={handleShow}>
+    <div className="app">
+      <h4 className="element">Welcome to Employee App</h4>
+      <Button className="element" variant="primary" onClick={handleShow}>
         Add Employee
       </Button>
+      {tableData.length == 0 ? (
+        <Alert className="alert alert-warning" role="alert">
+          No Data To Show
+        </Alert>
+      ) : (
+        <MyTable
+          head={[
+            "Name",
+            "Surname",
+            "E-mail",
+            "Position",
+            "Level of Position",
+            "Country works for",
+            "Salary",
+            "Actions",
+          ]}
+          body={tableData.map((data, key) => [
+            data.name,
+            data.surname,
+            data.email,
+            data.position,
+            data.positionLevel,
+            data.country,
+            data.salary,
+
+            [
+              <FontAwesomeIcon
+                icon={faUserPen}
+                className="auto"
+                onClick={handlePen}
+              />,
+              <FontAwesomeIcon
+                icon={faTrash}
+                className="auto"
+                onClick={() => {
+                  const tmpUsers = [...tableData];
+                  tmpUsers.splice(key, 1);
+                  setTableData(tmpUsers);
+                }}
+              />,
+            ],
+          ])}
+        ></MyTable>
+      )}
+
       <Modal
         show={show}
         onHide={handleClose}
@@ -165,9 +231,12 @@ function App() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Table striped bordered hover>
+
+      {/*  <Table striped bordered hover>
         <thead>
           <tr>
+            <th>Actions</th>
+            <th>ID</th>
             <th>Name</th>
             <th>Surname</th>
             <th>E-mail</th>
@@ -180,6 +249,9 @@ function App() {
         <tbody>
           {tableData.map((data, index) => (
             <tr key={index}>
+              <FontAwesomeIcon icon={faUserPen} onClick={handlePen} />
+              <FontAwesomeIcon icon={faTrash} />
+              <td>{data.key}</td>
               <td>{data.name}</td>
               <td>{data.surname}</td>
               <td>{data.email}@gmail.com</td>
@@ -190,7 +262,7 @@ function App() {
             </tr>
           ))}
         </tbody>
-      </Table>
+      </Table> */}
     </div>
   );
 }
