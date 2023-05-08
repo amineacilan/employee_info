@@ -1,9 +1,6 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
-import Alert from 'react-bootstrap/Alert';
 function MyTable({ head, body }) {
-
-
   return (
     <div>
       <Table>
@@ -21,7 +18,7 @@ function MyTable({ head, body }) {
                 <td key={key}>
                   {Array.isArray(item) ? (
                     <div className="d-flex d-grid gap-4 justify-end">
-                      
+                      {" "}
                       {item}
                     </div>
                   ) : (

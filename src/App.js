@@ -14,38 +14,28 @@ import { faTrash, faUserPen } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   const [show, setShow] = useState(false);
-
+  const [key, setKey] = useState();
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
+  const [formData, setFormData] = useState({}); // Employee class
+  const [tableData, setTableData] = useState([]); // Employee List
 
-  const [formData, setFormData] = useState({});
-  const [tableData, setTableData] = useState([]);
   const handleSubmit = (event) => {
     event.preventDefault();
     setTableData((prevState) => [...prevState, formData]);
     setFormData({});
-    /*  isShowNoDataMessage(); */
     setShow(false);
-    /* console.log(tableData); */
   };
+
+  const handleEdit = () => {
+    tableData[key] = formData;
+    setShow(false);
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
-
-  const handlePen = () => {
-    console.log("penn");
-   /*  setShow(true); */
-  };
-
-  /*  const isShowNoDataMessage = (tableData) => {
-    if (tableData.length == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-  console.log(tableData.length, isShowNoDataMessage); */
   return (
     <div className="app">
       <h4 className="element">Welcome to Employee App</h4>
@@ -76,12 +66,15 @@ function App() {
             data.positionLevel,
             data.country,
             data.salary,
-
             [
               <FontAwesomeIcon
                 icon={faUserPen}
                 className="auto"
-                onClick={handlePen}
+                onClick={() => {
+                  setFormData(data);
+                  setKey(key);
+                  setShow(true);
+                }}
               />,
               <FontAwesomeIcon
                 icon={faTrash}
@@ -146,7 +139,7 @@ function App() {
                   value={formData.email || ""}
                   onChange={handleChange}
                 />
-                <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
+                {/* <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text> */}
               </InputGroup>
 
               <br />
@@ -214,11 +207,6 @@ function App() {
                   </InputGroup>
                 </Col>
               </Row>
-
-              {/*  <Form.Label>Email address</Form.Label> */}
-              {/*  <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text> */}
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -229,40 +217,11 @@ function App() {
           <Button variant="primary" onClick={handleSubmit}>
             INSERT
           </Button>
+          <Button variant="primary" onClick={() => handleEdit()}>
+            CHANGE
+          </Button>
         </Modal.Footer>
       </Modal>
-
-      {/*  <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Actions</th>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>E-mail</th>
-            <th>Position</th>
-            <th>Level of Position</th>
-            <th>Country works for</th>
-            <th>Salary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((data, index) => (
-            <tr key={index}>
-              <FontAwesomeIcon icon={faUserPen} onClick={handlePen} />
-              <FontAwesomeIcon icon={faTrash} />
-              <td>{data.key}</td>
-              <td>{data.name}</td>
-              <td>{data.surname}</td>
-              <td>{data.email}@gmail.com</td>
-              <td>{data.position}</td>
-              <td>{data.positionLevel}</td>
-              <td>{data.country}</td>
-              <td>{data.salary}.000 ₺</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table> */}
     </div>
   );
 }
