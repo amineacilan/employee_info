@@ -11,15 +11,42 @@ import MyTable from "./MyTable";
 import Alert from "react-bootstrap/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUserPen } from "@fortawesome/free-solid-svg-icons";
+import { FormCheck } from "react-bootstrap";
 
 function App() {
   const [show, setShow] = useState(false);
   const [key, setKey] = useState();
-  const handleShow = () => setShow(true);
-  const handleClose = () => setShow(false);
+  const [currency, setCurrency] = useState();
+  const [pageType, setPageType] = useState("insert");
   const [formData, setFormData] = useState({}); // Employee class
   const [tableData, setTableData] = useState([]); // Employee List
+  const titles = [
+    "Name",
+    "Surname",
+    "E-mail",
+    "Position",
+    "Level of Position",
+    "Country works for",
+    "Salary",
+    "Actions",
+  ];
+  const options = [
+    { label: "Software Developer", value: "Developer" },
+    { label: "System Analysts", value: "Analyst" },
+    { label: "Network Administrators", value: "Network" },
+    { label: "Database Administrators", value: "Database" },
+    { label: "Computer Support Technicians", value: "Support" },
+    { label: "Security Experts", value: "Security" },
+    { label: "Project Managers", value: "PM" },
+    { label: "Technology Consultants", value: "Consultants" },
+  ];
+  const currencies = ["₺", "€", "$"];
+  const handleShow = () => {
+    setShow(true);
+    setPageType("insert");
+  };
 
+  const handleClose = () => setShow(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     setTableData((prevState) => [...prevState, formData]);
@@ -36,6 +63,7 @@ function App() {
     const { name, value } = event.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
+
   return (
     <div className="app">
       <h4 className="element">Welcome to Employee App</h4>
@@ -48,24 +76,15 @@ function App() {
         </Alert>
       ) : (
         <MyTable
-          head={[
-            "Name",
-            "Surname",
-            "E-mail",
-            "Position",
-            "Level of Position",
-            "Country works for",
-            "Salary",
-            "Actions",
-          ]}
+          head={titles.map((title) => title)}
           body={tableData.map((data, key) => [
             data.name,
             data.surname,
-            data.email,
+            data.email + `@gmail.com`,
             data.position,
             data.positionLevel,
             data.country,
-            data.salary,
+            data.salary + ".000 " + currency,
             [
               <FontAwesomeIcon
                 icon={faUserPen}
@@ -74,6 +93,7 @@ function App() {
                   setFormData(data);
                   setKey(key);
                   setShow(true);
+                  setPageType("edit");
                 }}
               />,
               <FontAwesomeIcon
@@ -100,11 +120,22 @@ function App() {
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Insert Employee</Modal.Title>
+          {pageType == "insert" ? (
+            <Modal.Title>Insert Employee</Modal.Title>
+          ) : (
+            <Modal.Title>EDIT Employee</Modal.Title>
+          )}
         </Modal.Header>
         <Modal.Body>
-          Welcome to the page of insert employee information. Please fill in the
-          fields below.
+          {pageType == "insert" ? (
+            <p>
+              Welcome to the page of insert employee information. Please fill in
+              the fields below.
+            </p>
+          ) : (
+            <p>Please update the fields you want to change</p>
+          )}
+
           <Form>
             <Row className="g-2">
               <Col md>
@@ -139,7 +170,7 @@ function App() {
                   value={formData.email || ""}
                   onChange={handleChange}
                 />
-                {/* <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text> */}
+                <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
               </InputGroup>
 
               <br />
@@ -151,16 +182,9 @@ function App() {
                     value={formData.position || ""}
                     onChange={handleChange}
                   >
-                    <option value="Developer">Software Developer</option>
-                    <option value="Analyst">System Analysts</option>
-                    <option value="Network">Network Administrators</option>
-                    <option value="Database">Database Administrators</option>
-                    <option value="Support">
-                      Computer Support Technicians
-                    </option>
-                    <option value="Security">Security Experts</option>
-                    <option value="PM">Project Managers</option>
-                    <option value="Consultants">Technology Consultants</option>
+                    {options.map((option) => (
+                      <option value={option.value}>{option.label}</option>
+                    ))}
                   </Form.Select>
                 </Col>
                 <Col md>
@@ -203,8 +227,21 @@ function App() {
                       value={formData.salary || ""}
                       onChange={handleChange}
                     />
-                    <InputGroup.Text>.000 ₺</InputGroup.Text>
+                    <InputGroup.Text>.000</InputGroup.Text>
                   </InputGroup>
+                  <div>
+                    {currencies.map((currency) => (
+                      <Form.Check
+                        reverse
+                        inline
+                        type="checkbox"
+                        label={currency}
+                        onClick={() => {
+                          setCurrency(currency);
+                        }}
+                      />
+                    ))}
+                  </div>
                 </Col>
               </Row>
             </Form.Group>
@@ -214,12 +251,15 @@ function App() {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            INSERT
-          </Button>
-          <Button variant="primary" onClick={() => handleEdit()}>
-            CHANGE
-          </Button>
+          {pageType == "insert" ? (
+            <Button variant="primary" onClick={handleSubmit}>
+              INSERT
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={() => handleEdit()}>
+              SAVE
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>
